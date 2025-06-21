@@ -27,7 +27,7 @@ import { Input } from '@/components/ui/input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: TData[] | undefined;
   filterColumn: string;
   filterPlaceholder: string;
   meta?: any;
@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
   );
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     meta,
     getCoreRowModel: getCoreRowModel(),
