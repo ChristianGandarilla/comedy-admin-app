@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Image from 'next/image';
 import { Mail, Mic, Phone, Music, MoreVertical } from 'lucide-react';
@@ -13,9 +14,11 @@ import {
 
 interface ComedianCardProps {
   comedian: Comedian;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export default function ComedianCard({ comedian }: ComedianCardProps) {
+export default function ComedianCard({ comedian, onEdit, onDelete }: ComedianCardProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="flex-row items-start justify-between gap-4">
@@ -44,9 +47,11 @@ export default function ComedianCard({ comedian }: ComedianCardProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
                 <DropdownMenuItem>View History</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                    Delete
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
