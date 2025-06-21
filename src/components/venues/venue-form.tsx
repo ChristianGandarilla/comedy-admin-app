@@ -139,7 +139,7 @@ export default function VenueForm({
                     <FormItem>
                         <FormLabel>Venue Image</FormLabel>
                         <FormControl>
-                            <>
+                            <div>
                                 <Input
                                     type="file"
                                     className="hidden"
@@ -165,7 +165,7 @@ export default function VenueForm({
                                     </div>
                                     )}
                                 </div>
-                            </>
+                            </div>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
