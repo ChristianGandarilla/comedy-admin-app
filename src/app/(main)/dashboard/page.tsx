@@ -4,6 +4,7 @@ import StatsCards from '@/components/dashboard/stats-cards';
 import IncomeExpenseChart from '@/components/dashboard/income-expense-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import TopPerformersChart from '@/components/dashboard/top-performers-chart';
+import UpcomingShows from '@/components/dashboard/upcoming-shows';
 
 export default function DashboardPage() {
   return (
@@ -22,7 +23,10 @@ export default function DashboardPage() {
             <IncomeExpenseChart />
           </CardContent>
         </Card>
-        <Card className="lg:col-span-2">
+        <UpcomingShows />
+      </div>
+      <div className="grid grid-cols-1 gap-6">
+        <Card>
           <CardHeader>
             <CardTitle className="font-headline">Top Performers</CardTitle>
           </CardHeader>
