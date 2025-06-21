@@ -25,14 +25,28 @@ const StatusCell = ({ dateString }: { dateString: string }) => {
 
   React.useEffect(() => {
     // This code runs only on the client, after hydration
-    const showDate = new Date(dateString);
-    const now = new Date();
-    setStatus(showDate > now ? 'Upcoming' : 'Past');
+    const showDateAtMidnight = new Date(dateString);
+    showDateAtMidnight.setHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (showDateAtMidnight.getTime() === today.getTime()) {
+      setStatus('Active');
+    } else if (showDateAtMidnight > today) {
+      setStatus('Upcoming');
+    } else {
+      setStatus('Past');
+    }
   }, [dateString]);
 
   if (status === null) {
     // Render a placeholder on the server and on initial client render to prevent mismatch
     return <Skeleton className="h-6 w-20 rounded-full" />;
+  }
+  
+  if (status === 'Active') {
+    return <Badge variant={'outline'} className="text-green-600 border-green-600">{status}</Badge>;
   }
 
   return <Badge variant={status === 'Upcoming' ? 'default' : 'secondary'}>{status}</Badge>;
