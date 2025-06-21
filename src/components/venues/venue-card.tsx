@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { MapPin, Calendar, MoreVertical, Star } from 'lucide-react';
+import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram } from 'lucide-react';
 import type { Venue } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,13 +55,31 @@ export default function VenueCard({ venue, onEdit, onDelete }: VenueCardProps) {
           {venue.address}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col justify-end gap-4">
-        <div className="flex items-center gap-2">
-            <Badge variant="outline">
-                <Star className="h-3 w-3 mr-1 text-yellow-400 fill-yellow-400"/>
-                Top Venue
-            </Badge>
-            <Badge variant="secondary">{venue.showHistory.length} Shows</Badge>
+      <CardContent className="flex-grow flex flex-col justify-between gap-4">
+        <div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                <Phone className="h-4 w-4" />
+                <span>{venue.contact.phone}</span>
+            </div>
+            <div className="flex items-center gap-2 mb-4">
+                <Badge variant="outline">
+                    <Star className="h-3 w-3 mr-1 text-yellow-400 fill-yellow-400"/>
+                    Top Venue
+                </Badge>
+                <Badge variant="secondary">{venue.showHistory.length} Shows</Badge>
+            </div>
+            <div className="flex items-center gap-4 text-muted-foreground">
+                {venue.socialMedia?.instagram && (
+                    <a href={venue.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Instagram className="h-5 w-5" />
+                    </a>
+                )}
+                {venue.socialMedia?.twitter && (
+                    <a href={venue.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Twitter className="h-5 w-5" />
+                    </a>
+                )}
+            </div>
         </div>
         <Button variant="outline" className="w-full mt-2">
           <Calendar className="mr-2 h-4 w-4" />

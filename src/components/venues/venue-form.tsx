@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { Venue } from '@/lib/types';
+import { Instagram, Twitter } from 'lucide-react';
 
 const availableDaysOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -149,6 +150,42 @@ export default function VenueForm({
                         <FormItem><FormLabel className="text-xs">Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                 </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <Label>Social Media</Label>
+              <div className="space-y-3 rounded-md border p-4">
+                <FormField
+                  control={form.control}
+                  name="socialMedia.instagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Instagram className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://instagram.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="socialMedia.twitter"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Twitter className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://x.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
             <FormField
