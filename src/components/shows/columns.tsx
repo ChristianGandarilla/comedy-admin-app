@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import { ColumnDef, Row, Table } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,25 @@ import type { Show } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const StatusCell = ({ dateString }: { dateString: string }) => {
+  const [status, setStatus] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    // This code runs only on the client, after hydration
+    const showDate = new Date(dateString);
+    const now = new Date();
+    setStatus(showDate > now ? 'Upcoming' : 'Past');
+  }, [dateString]);
+
+  if (status === null) {
+    // Render a placeholder on the server and on initial client render to prevent mismatch
+    return <Skeleton className="h-6 w-20 rounded-full" />;
+  }
+
+  return <Badge variant={status === 'Upcoming' ? 'default' : 'secondary'}>{status}</Badge>;
+};
 
 interface ActionsCellProps<TData, TValue> {
   row: Row<TData>;
@@ -99,9 +119,8 @@ export const columns: ColumnDef<Show>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-        const date = new Date(row.getValue('date'));
-        const status = date > new Date() ? 'Upcoming' : 'Past';
-        return <Badge variant={status === 'Upcoming' ? 'default' : 'secondary'}>{status}</Badge>;
+        const date = row.getValue('date') as string;
+        return <StatusCell dateString={date} />;
     }
   },
   {
