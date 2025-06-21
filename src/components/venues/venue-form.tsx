@@ -26,7 +26,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { Venue } from '@/lib/types';
-import { Instagram, Twitter } from 'lucide-react';
+import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react';
 
 const availableDaysOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -41,6 +41,8 @@ const formSchema = z.object({
   socialMedia: z.object({
     twitter: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
     instagram: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
+    youtube: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
+    facebook: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
   }),
   availableDays: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one day.',
@@ -75,6 +77,8 @@ export default function VenueForm({
       socialMedia: {
         twitter: '',
         instagram: '',
+        youtube: '',
+        facebook: '',
       },
       availableDays: [],
     },
@@ -85,14 +89,14 @@ export default function VenueForm({
       if (venue) {
         form.reset({
           ...venue,
-          socialMedia: venue.socialMedia || { twitter: '', instagram: '' },
+          socialMedia: venue.socialMedia || { twitter: '', instagram: '', youtube: '', facebook: '' },
         });
       } else {
         form.reset({
           name: '',
           address: '',
           contact: { name: '', email: '', phone: '' },
-          socialMedia: { twitter: '', instagram: '' },
+          socialMedia: { twitter: '', instagram: '', youtube: '', facebook: '' },
           availableDays: [],
         });
       }
@@ -101,7 +105,7 @@ export default function VenueForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{venue ? 'Edit Venue' : 'Add New Venue'}</DialogTitle>
           <DialogDescription>
@@ -164,6 +168,36 @@ export default function VenueForm({
                         <div className="flex items-center gap-3">
                             <Instagram className="h-5 w-5 text-muted-foreground" />
                             <Input placeholder="https://instagram.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="socialMedia.facebook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Facebook className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://facebook.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="socialMedia.youtube"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Youtube className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://youtube.com/..." {...field} />
                         </div>
                       </FormControl>
                       <FormMessage />

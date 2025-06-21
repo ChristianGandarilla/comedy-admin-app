@@ -111,7 +111,7 @@ export default function ComedianForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{comedian ? 'Edit Comedian' : 'Add New Comedian'}</DialogTitle>
           <DialogDescription>

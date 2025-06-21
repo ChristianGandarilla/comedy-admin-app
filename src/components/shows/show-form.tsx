@@ -110,7 +110,7 @@ export default function ShowForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{show ? 'Edit Show' : 'Add New Show'}</DialogTitle>
           <DialogDescription>

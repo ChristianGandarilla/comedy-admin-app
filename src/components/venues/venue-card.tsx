@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram } from 'lucide-react';
+import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram, Facebook, Youtube } from 'lucide-react';
 import type { Venue } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,6 +72,16 @@ export default function VenueCard({ venue, onEdit, onDelete }: VenueCardProps) {
                 {venue.socialMedia?.instagram && (
                     <a href={venue.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
                         <Instagram className="h-5 w-5" />
+                    </a>
+                )}
+                {venue.socialMedia?.facebook && (
+                    <a href={venue.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Facebook className="h-5 w-5" />
+                    </a>
+                )}
+                {venue.socialMedia?.youtube && (
+                    <a href={venue.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Youtube className="h-5 w-5" />
                     </a>
                 )}
                 {venue.socialMedia?.twitter && (

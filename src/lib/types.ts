@@ -21,6 +21,8 @@ export interface Venue {
   socialMedia: {
     twitter: string;
     instagram: string;
+    youtube: string;
+    facebook: string;
   };
   imageUrl: string;
   availableDays: string[];
