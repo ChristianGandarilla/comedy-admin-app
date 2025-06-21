@@ -4,6 +4,7 @@ export interface Show {
   location: string;
   lineup: string[];
   performers: Comedian[];
+  hostId?: string;
   notes: string;
   income_expenses_id: string;
   attendance: number;

@@ -69,7 +69,8 @@ export default function ShowsPage() {
         performers: showPerformers,
         notes: data.notes,
         income_expenses_id: `fin-${Date.now()}`,
-        attendance: data.attendance
+        attendance: data.attendance,
+        hostId: data.hostId,
       };
       setShows([newShow, ...shows]);
     }

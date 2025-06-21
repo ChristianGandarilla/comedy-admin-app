@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { ColumnDef, Row, Table } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -95,13 +95,23 @@ export const columns: ColumnDef<Show>[] = [
     header: 'Performers',
     cell: ({ row }) => {
       const performers = row.getValue('performers') as Show['performers'];
+      const { hostId } = row.original;
       return (
         <div className="flex -space-x-2 overflow-hidden">
           {performers.map((p) => (
-            <Avatar key={p.id} className="h-8 w-8 border-2 border-background">
-              <AvatarImage src={p.imageUrl} alt={p.name} />
-              <AvatarFallback>{p.name.charAt(0)}</AvatarFallback>
-            </Avatar>
+             <div key={p.id} className="relative">
+                <Avatar key={p.id} className="h-8 w-8 border-2 border-background">
+                    <AvatarImage src={p.imageUrl} alt={p.name} />
+                    <AvatarFallback>{p.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {p.id === hostId && (
+                    <div className="absolute -top-1 -right-1" title={`${p.name} (Host)`}>
+                        <Badge variant="secondary" className="h-5 w-5 p-0 flex items-center justify-center rounded-full border-2 border-background bg-amber-400 hover:bg-amber-400">
+                            <Star className="h-3 w-3 text-white" />
+                        </Badge>
+                    </div>
+                )}
+             </div>
           ))}
         </div>
       );

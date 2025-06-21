@@ -93,6 +93,7 @@ export const shows: Show[] = [
     location: 'The Laugh Factory',
     lineup: ['John Doe', 'Jane Smith'],
     performers: [comedians[0], comedians[1]],
+    hostId: 'com2',
     notes: 'Sold out show. Great energy.',
     income_expenses_id: 'fin1',
     attendance: 150,

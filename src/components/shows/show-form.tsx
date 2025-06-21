@@ -48,6 +48,8 @@ const formSchema = z.object({
   }),
   attendance: z.coerce.number().min(0, 'Attendance cannot be negative.'),
   notes: z.string().optional(),
+  hasHost: z.boolean().default(false),
+  hostId: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -74,6 +76,10 @@ export default function ShowForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       performerIds: [],
+      attendance: 0,
+      notes: '',
+      hasHost: false,
+      hostId: undefined,
     },
   });
 
@@ -86,6 +92,8 @@ export default function ShowForm({
           performerIds: show.performers.map(p => p.id),
           attendance: show.attendance,
           notes: show.notes,
+          hasHost: !!show.hostId,
+          hostId: show.hostId,
         });
       } else {
         form.reset({
@@ -94,14 +102,35 @@ export default function ShowForm({
           performerIds: [],
           attendance: 0,
           notes: '',
+          hasHost: false,
+          hostId: undefined,
         });
       }
     }
   }, [show, isOpen, form]);
 
+  const hasHost = form.watch('hasHost');
+  const selectedPerformerIds = form.watch('performerIds');
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      // If 'hasHost' is unchecked, clear the hostId
+      if (name === 'hasHost' && !value.hasHost) {
+        form.setValue('hostId', undefined, { shouldValidate: true });
+      }
+      // If the selected host is removed from the performers list, clear the hostId
+      if (name === 'performerIds' && value.hostId && !value.performerIds?.includes(value.hostId)) {
+        form.setValue('hostId', undefined, { shouldValidate: true });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   const handleFormSubmit = (data: FormValues) => {
+    const { hasHost, ...rest } = data;
     onSubmit({
-      ...data,
+      ...rest,
+      hostId: hasHost ? data.hostId : undefined,
       date: data.date.toISOString(),
       lineup: [],
       income_expenses_id: show?.income_expenses_id || '',
@@ -225,6 +254,54 @@ export default function ShowForm({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="hasHost"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>Does this show have a host?</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {hasHost && (
+              <FormField
+                control={form.control}
+                name="hostId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Host</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a host from the performers" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {selectedPerformerIds.length > 0 ? (
+                          comedians
+                            .filter(c => selectedPerformerIds.includes(c.id))
+                            .map((comedian) => (
+                              <SelectItem key={comedian.id} value={comedian.id}>{comedian.name}</SelectItem>
+                            ))
+                        ) : (
+                          <div className="p-4 text-sm text-muted-foreground">Please select performers first.</div>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
                 control={form.control}
                 name="attendance"
