@@ -50,7 +50,18 @@ const formSchema = z.object({
   notes: z.string().optional(),
   hasHost: z.boolean().default(false),
   hostId: z.string().optional(),
-});
+}).refine(
+  (data) => {
+    if (data.hasHost && !data.hostId) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: 'Please select a host.',
+    path: ['hostId'],
+  }
+);
 
 type FormValues = z.infer<typeof formSchema>;
 type ShowFormData = Omit<Show, 'id' | 'performers'> & { performerIds: string[] };
@@ -254,54 +265,57 @@ export default function ShowForm({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="hasHost"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel>Does this show have a host?</FormLabel>
-                  </div>
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {hasHost && (
+            
+            <div className="grid grid-cols-2 gap-4 items-start pt-2">
               <FormField
                 control={form.control}
-                name="hostId"
+                name="hasHost"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Host</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ''}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a host from the performers" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {selectedPerformerIds.length > 0 ? (
-                          comedians
-                            .filter(c => selectedPerformerIds.includes(c.id))
-                            .map((comedian) => (
-                              <SelectItem key={comedian.id} value={comedian.id}>{comedian.name}</SelectItem>
-                            ))
-                        ) : (
-                          <div className="p-4 text-sm text-muted-foreground">Please select performers first.</div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                  <FormItem className="flex flex-row items-center space-x-3 space-y-0 h-10">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      Assign Host
+                    </FormLabel>
                   </FormItem>
                 )}
               />
-            )}
+              
+              {hasHost && (
+                <FormField
+                  control={form.control}
+                  name="hostId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} value={field.value || ''} required>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select host..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {selectedPerformerIds.length > 0 ? (
+                            comedians
+                              .filter(c => selectedPerformerIds.includes(c.id))
+                              .map((comedian) => (
+                                <SelectItem key={comedian.id} value={comedian.id}>{comedian.name}</SelectItem>
+                              ))
+                          ) : (
+                            <div className="p-4 text-sm text-muted-foreground">Select performers first.</div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+
             <FormField
                 control={form.control}
                 name="attendance"
