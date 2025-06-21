@@ -1,10 +1,11 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,7 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { Venue } from '@/lib/types';
-import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react';
+import { Instagram, Twitter, Facebook, Youtube, UploadCloud } from 'lucide-react';
 
 const availableDaysOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -47,6 +48,7 @@ const formSchema = z.object({
   availableDays: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one day.',
   }),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -64,6 +66,7 @@ export default function VenueForm({
   onSubmit,
   venue,
 }: VenueFormProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -81,8 +84,11 @@ export default function VenueForm({
         facebook: '',
       },
       availableDays: [],
+      imageUrl: '',
     },
   });
+
+  const imageUrl = form.watch('imageUrl');
 
   useEffect(() => {
     if (isOpen) {
@@ -98,10 +104,22 @@ export default function VenueForm({
           contact: { name: '', email: '', phone: '' },
           socialMedia: { twitter: '', instagram: '', youtube: '', facebook: '' },
           availableDays: [],
+          imageUrl: 'https://placehold.co/400x200.png',
         });
       }
     }
   }, [venue, isOpen, form]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue('imageUrl', reader.result as string, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -114,6 +132,45 @@ export default function VenueForm({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Venue Image</FormLabel>
+                        <FormControl>
+                            <>
+                                <Input
+                                    type="file"
+                                    className="hidden"
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                    accept="image/png, image/jpeg, image/gif"
+                                />
+                                <div
+                                    className="relative aspect-[2/1] w-full rounded-md border-2 border-dashed border-muted-foreground/50 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    {imageUrl ? (
+                                    <Image
+                                        src={imageUrl}
+                                        alt="Venue preview"
+                                        fill
+                                        className="object-cover rounded-md"
+                                    />
+                                    ) : (
+                                    <div className="text-center text-muted-foreground">
+                                        <UploadCloud className="mx-auto h-8 w-8"/>
+                                        <p>Click to upload an image</p>
+                                    </div>
+                                    )}
+                                </div>
+                            </>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
             <FormField
               control={form.control}
               name="name"
@@ -246,7 +303,7 @@ export default function VenueForm({
                                 checked={field.value?.includes(item)}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, item])
+                                    ? field.onChange([...(field.value || []), item])
                                     : field.onChange(
                                         field.value?.filter((value) => value !== item)
                                       );

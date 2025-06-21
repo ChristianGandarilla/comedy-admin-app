@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import type { Venue } from '@/lib/types';
 
-type VenueFormData = Omit<Venue, 'id' | 'imageUrl' | 'showHistory'>;
+type VenueFormData = Omit<Venue, 'id' | 'showHistory'>;
 
 export default function VenuesPage() {
   const [venues, setVenues] = useState<Venue[]>(initialVenues);
@@ -54,14 +54,14 @@ export default function VenuesPage() {
     if (editingVenue) {
       setVenues(
         venues.map((v) =>
-          v.id === editingVenue.id ? { ...v, ...data } : v
+          v.id === editingVenue.id ? { ...v, ...data, imageUrl: data.imageUrl || v.imageUrl } : v
         )
       );
     } else {
       const newVenue: Venue = {
         ...data,
         id: `ven-${Date.now()}`,
-        imageUrl: 'https://placehold.co/400x200.png',
+        imageUrl: data.imageUrl || 'https://placehold.co/400x200.png',
         showHistory: [],
       };
       setVenues([newVenue, ...venues]);

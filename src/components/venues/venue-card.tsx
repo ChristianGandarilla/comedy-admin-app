@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram, Facebook, Youtube } from 'lucide-react';
+import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram, Facebook, Youtube, Map } from 'lucide-react';
 import type { Venue } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '../ui/badge';
@@ -91,10 +92,31 @@ export default function VenueCard({ venue, onEdit, onDelete }: VenueCardProps) {
                 )}
             </div>
         </div>
-        <Button variant="outline" className="w-full mt-2">
-          <Calendar className="mr-2 h-4 w-4" />
-          View Details
-        </Button>
+        <div className="flex w-full gap-2 mt-2">
+            <Button variant="outline" className="w-full">
+                <Calendar className="mr-2 h-4 w-4" />
+                View Details
+            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon" className="shrink-0">
+                    <Map className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Get Directions</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue.address)}`} target="_blank" rel="noopener noreferrer">Google Maps</a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <a href={`https://waze.com/ul?q=${encodeURIComponent(venue.address)}`} target="_blank" rel="noopener noreferrer">Waze</a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <a href={`http://maps.apple.com/?q=${encodeURIComponent(venue.address)}`} target="_blank" rel="noopener noreferrer">Apple Maps</a>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
       </CardContent>
     </Card>
   );
