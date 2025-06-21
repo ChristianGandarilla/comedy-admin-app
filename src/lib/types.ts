@@ -34,6 +34,12 @@ export interface Comedian {
     email: string;
     phone: string;
   };
+  socialMedia: {
+    instagram: string;
+    facebook: string;
+    youtube: string;
+    x: string;
+  };
   imageUrl: string;
   introSong: string;
   observations: string;

@@ -25,6 +25,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { Comedian } from '@/lib/types';
+import { Instagram, Facebook, Youtube, Twitter, Music } from 'lucide-react';
+import { Label } from '../ui/label';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -32,8 +34,14 @@ const formSchema = z.object({
     email: z.string().email('Invalid email address.'),
     phone: z.string().min(10, 'Phone number seems too short.'),
   }),
-  introSong: z.string().min(2, 'Intro song must be at least 2 characters.'),
-  observations: z.string().default(''),
+  socialMedia: z.object({
+    instagram: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
+    facebook: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
+    youtube: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
+    x: z.string().url({ message: "Invalid URL" }).optional().or(z.literal('')),
+  }),
+  introSong: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  observations: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -59,6 +67,12 @@ export default function ComedianForm({
         email: '',
         phone: '',
       },
+      socialMedia: {
+        instagram: '',
+        facebook: '',
+        youtube: '',
+        x: '',
+      },
       introSong: '',
       observations: '',
     },
@@ -67,13 +81,22 @@ export default function ComedianForm({
   useEffect(() => {
     if (isOpen) {
       if (comedian) {
-        form.reset(comedian);
+        form.reset({
+          ...comedian,
+          socialMedia: comedian.socialMedia || { instagram: '', facebook: '', youtube: '', x: '' }
+        });
       } else {
         form.reset({
           name: '',
           contact: {
             email: '',
             phone: '',
+          },
+          socialMedia: {
+            instagram: '',
+            facebook: '',
+            youtube: '',
+            x: '',
           },
           introSong: '',
           observations: '',
@@ -88,7 +111,7 @@ export default function ComedianForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{comedian ? 'Edit Comedian' : 'Add New Comedian'}</DialogTitle>
           <DialogDescription>
@@ -136,14 +159,84 @@ export default function ComedianForm({
                 </FormItem>
               )}
             />
+            
+            <div className="space-y-2 pt-2">
+              <Label>Social Media</Label>
+              <div className="space-y-3 rounded-md border p-4">
+                <FormField
+                  control={form.control}
+                  name="socialMedia.instagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Instagram className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://instagram.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="socialMedia.facebook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Facebook className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://facebook.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="socialMedia.youtube"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Youtube className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://youtube.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="socialMedia.x"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center gap-3">
+                            <Twitter className="h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="https://x.com/..." {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="introSong"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Intro Song</FormLabel>
+                  <FormLabel>Intro Song URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Eye of the Tiger" {...field} />
+                    <div className="flex items-center gap-3">
+                        <Music className="h-5 w-5 text-muted-foreground" />
+                        <Input placeholder="https://spotify.com/track/..." {...field} />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

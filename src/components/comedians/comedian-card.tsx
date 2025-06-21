@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Mail, Mic, Phone, Music, MoreVertical } from 'lucide-react';
+import { Mail, Mic, Phone, Music, MoreVertical, Instagram, Facebook, Youtube, Twitter } from 'lucide-react';
 import type { Comedian } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,7 +63,35 @@ export default function ComedianCard({ comedian, onEdit, onDelete }: ComedianCar
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Music className="h-4 w-4" />
-                <span>Intro: {comedian.introSong}</span>
+                {comedian.introSong ? (
+                  <a href={comedian.introSong} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      Intro Song
+                  </a>
+                ) : (
+                  <span>Intro: Not set</span>
+                )}
+            </div>
+            <div className="flex items-center gap-4 text-muted-foreground mt-4">
+                {comedian.socialMedia?.instagram && (
+                    <a href={comedian.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Instagram className="h-5 w-5" />
+                    </a>
+                )}
+                {comedian.socialMedia?.facebook && (
+                    <a href={comedian.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Facebook className="h-5 w-5" />
+                    </a>
+                )}
+                {comedian.socialMedia?.youtube && (
+                    <a href={comedian.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Youtube className="h-5 w-5" />
+                    </a>
+                )}
+                {comedian.socialMedia?.x && (
+                    <a href={comedian.socialMedia.x} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+                        <Twitter className="h-5 w-5" />
+                    </a>
+                )}
             </div>
         </div>
         <Button variant="outline" className="w-full mt-4">
