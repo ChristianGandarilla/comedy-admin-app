@@ -75,11 +75,17 @@ const ActionsCell = <TData extends Show, TValue>({ row, table }: ActionsCellProp
         try {
             await navigator.share(shareData);
         } catch (error) {
+            // Don't show an error toast if the user cancels the share dialog
+            if (error instanceof DOMException && error.name === 'AbortError') {
+                console.log('Share was cancelled by the user.');
+                return;
+            }
+            
             console.error('Sharing failed:', error);
             toast({
                 variant: 'destructive',
                 title: 'Sharing Failed',
-                description: 'Could not share the show at this time.',
+                description: 'Could not share the show. This can happen if permissions are denied or your browser does not support it in this context.',
             });
         }
     } else {
