@@ -1,7 +1,8 @@
+
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal, Mail, MessageSquare } from 'lucide-react';
+import { ColumnDef, Row, Table } from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,31 +16,39 @@ import type { Show } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
 
-const TeamNotificationMenuItem = ({ show }: { show: Show }) => {
-    const { toast } = useToast();
+interface ActionsCellProps<TData, TValue> {
+  row: Row<TData>;
+  table: Table<TData>;
+}
 
-    const handleNotify = (platform: 'Email' | 'WhatsApp') => {
-        toast({
-            title: 'Notification Sent!',
-            description: `${platform} notifications sent to the team for "${show.location}".`,
-        });
-    };
+const ActionsCell = <TData extends Show, TValue>({ row, table }: ActionsCellProps<TData, TValue>) => {
+  const show = row.original;
+  const { handleEdit, handleDelete } = table.options.meta as any;
 
-    return (
-        <>
-            <DropdownMenuItem onClick={() => handleNotify('Email')}>
-                <Mail className="mr-2 h-4 w-4" />
-                Notify via Email
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleNotify('WhatsApp')}>
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Notify via WhatsApp
-            </DropdownMenuItem>
-        </>
-    );
+  return (
+    <div className="text-right">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => handleEdit(show)}>Edit Show</DropdownMenuItem>
+          <DropdownMenuItem>View Income/Expenses</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => handleDelete(show.id)} className="text-destructive focus:text-destructive">
+            Delete Show
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
 };
+
 
 export const columns: ColumnDef<Show>[] = [
   {
@@ -83,7 +92,7 @@ export const columns: ColumnDef<Show>[] = [
     header: () => <div className="text-right">Attendance</div>,
     cell: ({ row }) => {
       const attendance = parseInt(row.getValue('attendance'), 10);
-      return <div className="text-right font-medium">{attendance}</div>;
+      return <div className="text-right font-medium">{attendance || 'N/A'}</div>;
     },
   },
   {
@@ -97,29 +106,6 @@ export const columns: ColumnDef<Show>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const show = row.original;
-      return (
-        <div className="text-right">
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem>Edit Show</DropdownMenuItem>
-                <DropdownMenuItem>View Income/Expenses</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <TeamNotificationMenuItem show={show}/>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">Delete Show</DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-      );
-    },
+    cell: ActionsCell
   },
 ];

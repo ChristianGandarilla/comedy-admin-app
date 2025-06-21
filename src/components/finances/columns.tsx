@@ -1,6 +1,7 @@
+
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row, Table } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,39 @@ import {
 import type { Transaction } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate } from '@/lib/utils';
+
+interface ActionsCellProps<TData, TValue> {
+  row: Row<TData>;
+  table: Table<TData>;
+}
+
+const ActionsCell = <TData extends Transaction, TValue>({ row, table }: ActionsCellProps<TData, TValue>) => {
+  const transaction = row.original;
+  const { handleEdit, handleDelete } = table.options.meta as any;
+
+  return (
+    <div className="text-right">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => handleEdit(transaction)}>
+            Edit transaction
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => handleDelete(transaction.id)} className="text-destructive">
+            Delete transaction
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+};
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -70,33 +104,6 @@ export const columns: ColumnDef<Transaction>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const transaction = row.original;
-      return (
-        <div className="text-right">
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(transaction.id)}
-                >
-                Copy transaction ID
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Edit transaction</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">
-                Delete transaction
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-      );
-    },
+    cell: ActionsCell,
   },
 ];

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Image from 'next/image';
 import { MapPin, Calendar, MoreVertical, Star } from 'lucide-react';
@@ -14,9 +15,11 @@ import { Badge } from '../ui/badge';
 
 interface VenueCardProps {
   venue: Venue;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export default function VenueCard({ venue }: VenueCardProps) {
+export default function VenueCard({ venue, onEdit, onDelete }: VenueCardProps) {
   return (
     <Card className="flex flex-col">
       <div className="relative">
@@ -36,9 +39,11 @@ export default function VenueCard({ venue }: VenueCardProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
                     <DropdownMenuItem>View Shows</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                    <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                        Delete
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
