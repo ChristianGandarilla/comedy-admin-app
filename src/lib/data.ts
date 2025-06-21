@@ -1,3 +1,4 @@
+
 import type { Show, Venue, Comedian, Transaction } from './types';
 
 export const comedians: Comedian[] = [
@@ -51,7 +52,6 @@ export const venues: Venue[] = [
     contact: { name: 'Manager Mike', email: 'manager@laughfactory.com', phone: '111-111-1111' },
     socialMedia: { twitter: '@laughfactory', instagram: '@laughfactory', youtube: '', facebook: '' },
     imageUrl: 'https://placehold.co/400x200.png',
-    flyerUrl: 'https://placehold.co/400x600.png',
     availableDays: ['Friday', 'Saturday'],
     showHistory: ['show1', 'show3'],
   },
@@ -62,7 +62,6 @@ export const venues: Venue[] = [
     contact: { name: 'Owner Olivia', email: 'owner@comedycellar.com', phone: '222-222-2222' },
     socialMedia: { twitter: '@comedycellar', instagram: '@comedycellar', youtube: '', facebook: '' },
     imageUrl: 'https://placehold.co/400x200.png',
-    flyerUrl: '',
     availableDays: ['Wednesday', 'Thursday', 'Friday', 'Saturday'],
     showHistory: ['show2', 'show4'],
   },
@@ -73,7 +72,6 @@ export const venues: Venue[] = [
     contact: { name: 'Booker Ben', email: 'ben@gigglespot.com', phone: '333-333-3333' },
     socialMedia: { twitter: '@gigglespot', instagram: '@gigglespot', youtube: '', facebook: '' },
     imageUrl: 'https://placehold.co/400x200.png',
-    flyerUrl: '',
     availableDays: ['Tuesday', 'Friday', 'Saturday'],
     showHistory: [],
   },
@@ -84,7 +82,6 @@ export const venues: Venue[] = [
     contact: { name: 'Promoter Pam', email: 'pam@thestandup.com', phone: '444-444-4444' },
     socialMedia: { twitter: '@thestandup', instagram: '@thestandup', youtube: '', facebook: '' },
     imageUrl: 'https://placehold.co/400x200.png',
-    flyerUrl: '',
     availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     showHistory: [],
   },
@@ -101,6 +98,7 @@ export const shows: Show[] = [
     notes: 'Sold out show. Great energy.',
     income_expenses_id: 'fin1',
     attendance: 150,
+    flyerUrl: 'https://placehold.co/400x600.png',
   },
   {
     id: 'show2',
@@ -111,6 +109,7 @@ export const shows: Show[] = [
     notes: 'Good turnout, Mike\'s new material killed.',
     income_expenses_id: 'fin2',
     attendance: 120,
+    flyerUrl: '',
   },
   {
     id: 'show3',
@@ -121,6 +120,7 @@ export const shows: Show[] = [
     notes: 'Upcoming show.',
     income_expenses_id: 'fin3',
     attendance: 0,
+    flyerUrl: '',
   },
   {
     id: 'show4',
@@ -131,6 +131,7 @@ export const shows: Show[] = [
     notes: 'A classic show, full house.',
     income_expenses_id: 'fin4',
     attendance: 135,
+    flyerUrl: '',
   },
 ];
 

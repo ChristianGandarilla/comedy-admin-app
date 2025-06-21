@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram, Facebook, Youtube, Map, Share2 } from 'lucide-react';
+import { MapPin, Calendar, MoreVertical, Star, Phone, Twitter, Instagram, Facebook, Youtube, Map } from 'lucide-react';
 import type { Venue } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,40 +20,7 @@ interface VenueCardProps {
   onDelete: () => void;
 }
 
-const dataUrlToFile = async (dataUrl: string, filename: string): Promise<File | null> => {
-    try {
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      return new File([blob], filename, { type: blob.type });
-    } catch (error) {
-      console.error('Error converting data URL to file:', error);
-      return null;
-    }
-}
-
 export default function VenueCard({ venue, onEdit, onDelete }: VenueCardProps) {
-  const handleShare = async () => {
-    const shareData: ShareData = {
-        title: `Check out: ${venue.name}`,
-        text: `Here's a great venue for comedy shows: ${venue.name} at ${venue.address}.`,
-    };
-
-    if (navigator.share) {
-        if (venue.flyerUrl) {
-            const file = await dataUrlToFile(venue.flyerUrl, `${venue.name}-flyer.png`);
-            if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-                shareData.files = [file];
-            }
-        }
-        try {
-            await navigator.share(shareData);
-        } catch (error) {
-            console.error('Sharing failed:', error);
-        }
-    } else {
-        alert('Sharing is not supported on your browser.');
-    }
-  };
     
   return (
     <Card className="flex flex-col">
@@ -130,9 +97,6 @@ export default function VenueCard({ venue, onEdit, onDelete }: VenueCardProps) {
             <Button variant="outline" className="w-full">
                 <Calendar className="mr-2 h-4 w-4" />
                 View Details
-            </Button>
-            <Button variant="outline" size="icon" className="shrink-0" onClick={handleShare}>
-                <Share2 className="h-4 w-4" />
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

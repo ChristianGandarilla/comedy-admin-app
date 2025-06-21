@@ -1,3 +1,4 @@
+
 export interface Show {
   id: string;
   date: string;
@@ -8,6 +9,7 @@ export interface Show {
   notes: string;
   income_expenses_id: string;
   attendance: number;
+  flyerUrl?: string;
 }
 
 export interface Venue {
@@ -26,7 +28,6 @@ export interface Venue {
     facebook: string;
   };
   imageUrl: string;
-  flyerUrl?: string;
   availableDays: string[];
   showHistory: string[];
 }

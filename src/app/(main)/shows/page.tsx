@@ -71,6 +71,7 @@ export default function ShowsPage() {
         income_expenses_id: `fin-${Date.now()}`,
         attendance: data.attendance,
         hostId: data.hostId,
+        flyerUrl: data.flyerUrl,
       };
       setShows([newShow, ...shows]);
     }

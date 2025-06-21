@@ -1,12 +1,13 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import Image from 'next/image';
+import { CalendarIcon, Check, ChevronsUpDown, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -48,6 +49,7 @@ const formSchema = z.object({
   }),
   attendance: z.coerce.number().min(0, 'Attendance cannot be negative.'),
   notes: z.string().optional(),
+  flyerUrl: z.string().optional(),
   hasHost: z.boolean().default(false),
   hostId: z.string().optional(),
 }).refine(
@@ -83,16 +85,20 @@ export default function ShowForm({
   comedians,
   venues,
 }: ShowFormProps) {
+  const flyerInputRef = useRef<HTMLInputElement>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       performerIds: [],
       attendance: 0,
       notes: '',
+      flyerUrl: '',
       hasHost: false,
       hostId: undefined,
     },
   });
+
+  const flyerUrl = form.watch('flyerUrl');
 
   useEffect(() => {
     if (isOpen) {
@@ -103,6 +109,7 @@ export default function ShowForm({
           performerIds: show.performers.map(p => p.id),
           attendance: show.attendance,
           notes: show.notes,
+          flyerUrl: show.flyerUrl || '',
           hasHost: !!show.hostId,
           hostId: show.hostId,
         });
@@ -113,6 +120,7 @@ export default function ShowForm({
           performerIds: [],
           attendance: 0,
           notes: '',
+          flyerUrl: '',
           hasHost: false,
           hostId: undefined,
         });
@@ -137,6 +145,17 @@ export default function ShowForm({
     return () => subscription.unsubscribe();
   }, [form]);
 
+  const handleFlyerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue('flyerUrl', reader.result as string, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleFormSubmit = (data: FormValues) => {
     const { hasHost, ...rest } = data;
     onSubmit({
@@ -159,6 +178,46 @@ export default function ShowForm({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4 py-4">
+             <FormField
+                control={form.control}
+                name="flyerUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Show Flyer</FormLabel>
+                        <FormControl>
+                            <div>
+                                <Input
+                                    type="file"
+                                    className="hidden"
+                                    ref={flyerInputRef}
+                                    onChange={handleFlyerChange}
+                                    accept="image/png, image/jpeg, image/gif"
+                                />
+                                <div
+                                    className="relative aspect-[2/3] w-full rounded-md border-2 border-dashed border-muted-foreground/50 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50"
+                                    onClick={() => flyerInputRef.current?.click()}
+                                >
+                                    {flyerUrl ? (
+                                    <Image
+                                        src={flyerUrl}
+                                        alt="Flyer preview"
+                                        fill
+                                        className="object-contain rounded-md"
+                                        data-ai-hint="event flyer"
+                                    />
+                                    ) : (
+                                    <div className="text-center text-muted-foreground">
+                                        <UploadCloud className="mx-auto h-8 w-8"/>
+                                        <p>Click to upload a flyer</p>
+                                    </div>
+                                    )}
+                                </div>
+                            </div>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}

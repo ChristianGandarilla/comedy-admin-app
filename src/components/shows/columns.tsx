@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { ColumnDef, Row, Table } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal, Star } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, Star, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const StatusCell = ({ dateString }: { dateString: string }) => {
   const [status, setStatus] = React.useState<string | null>(null);
@@ -42,9 +43,53 @@ interface ActionsCellProps<TData, TValue> {
   table: Table<TData>;
 }
 
+const dataUrlToFile = async (dataUrl: string, filename: string): Promise<File | null> => {
+    try {
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      return new File([blob], filename, { type: blob.type });
+    } catch (error) {
+      console.error('Error converting data URL to file:', error);
+      return null;
+    }
+}
+
 const ActionsCell = <TData extends Show, TValue>({ row, table }: ActionsCellProps<TData, TValue>) => {
   const show = row.original;
   const { handleEdit, handleDelete } = table.options.meta as any;
+  const { toast } = useToast();
+
+  const handleShare = async () => {
+    const shareData: ShareData = {
+        title: `Comedy Show: ${show.location}`,
+        text: `Don't miss this comedy show on ${formatDate(show.date)} at ${show.location}, featuring ${show.lineup.join(', ')}!`,
+    };
+
+    if (navigator.share) {
+        if (show.flyerUrl) {
+            const file = await dataUrlToFile(show.flyerUrl, `show-flyer.png`);
+            if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+                shareData.files = [file];
+            }
+        }
+        try {
+            await navigator.share(shareData);
+        } catch (error) {
+            console.error('Sharing failed:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Sharing Failed',
+                description: 'Could not share the show at this time.',
+            });
+        }
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Not Supported',
+            description: 'Web sharing is not supported on your browser.',
+        });
+    }
+  };
 
   return (
     <div className="text-right">
@@ -59,6 +104,10 @@ const ActionsCell = <TData extends Show, TValue>({ row, table }: ActionsCellProp
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => handleEdit(show)}>Edit Show</DropdownMenuItem>
           <DropdownMenuItem>View Income/Expenses</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleShare}>
+            <Share2 className="mr-2 h-4 w-4" />
+            Share Show
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => handleDelete(show.id)} className="text-destructive focus:text-destructive">
             Delete Show
