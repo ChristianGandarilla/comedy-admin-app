@@ -26,6 +26,7 @@ export interface Venue {
     facebook: string;
   };
   imageUrl: string;
+  flyerUrl?: string;
   availableDays: string[];
   showHistory: string[];
 }

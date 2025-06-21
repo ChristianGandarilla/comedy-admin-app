@@ -49,6 +49,7 @@ const formSchema = z.object({
     message: 'You have to select at least one day.',
   }),
   imageUrl: z.string().optional(),
+  flyerUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -67,6 +68,7 @@ export default function VenueForm({
   venue,
 }: VenueFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const flyerInputRef = useRef<HTMLInputElement>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,10 +87,12 @@ export default function VenueForm({
       },
       availableDays: [],
       imageUrl: '',
+      flyerUrl: '',
     },
   });
 
   const imageUrl = form.watch('imageUrl');
+  const flyerUrl = form.watch('flyerUrl');
 
   useEffect(() => {
     if (isOpen) {
@@ -96,6 +100,7 @@ export default function VenueForm({
         form.reset({
           ...venue,
           socialMedia: venue.socialMedia || { twitter: '', instagram: '', youtube: '', facebook: '' },
+          flyerUrl: venue.flyerUrl || '',
         });
       } else {
         form.reset({
@@ -105,6 +110,7 @@ export default function VenueForm({
           socialMedia: { twitter: '', instagram: '', youtube: '', facebook: '' },
           availableDays: [],
           imageUrl: 'https://placehold.co/400x200.png',
+          flyerUrl: '',
         });
       }
     }
@@ -116,6 +122,17 @@ export default function VenueForm({
       const reader = new FileReader();
       reader.onloadend = () => {
         form.setValue('imageUrl', reader.result as string, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleFlyerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue('flyerUrl', reader.result as string, { shouldValidate: true });
       };
       reader.readAsDataURL(file);
     }
@@ -162,6 +179,46 @@ export default function VenueForm({
                                     <div className="text-center text-muted-foreground">
                                         <UploadCloud className="mx-auto h-8 w-8"/>
                                         <p>Click to upload an image</p>
+                                    </div>
+                                    )}
+                                </div>
+                            </div>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="flyerUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Venue Flyer</FormLabel>
+                        <FormControl>
+                            <div>
+                                <Input
+                                    type="file"
+                                    className="hidden"
+                                    ref={flyerInputRef}
+                                    onChange={handleFlyerChange}
+                                    accept="image/png, image/jpeg, image/gif"
+                                />
+                                <div
+                                    className="relative aspect-[2/3] w-full rounded-md border-2 border-dashed border-muted-foreground/50 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50"
+                                    onClick={() => flyerInputRef.current?.click()}
+                                >
+                                    {flyerUrl ? (
+                                    <Image
+                                        src={flyerUrl}
+                                        alt="Flyer preview"
+                                        fill
+                                        className="object-cover rounded-md"
+                                        data-ai-hint="event flyer"
+                                    />
+                                    ) : (
+                                    <div className="text-center text-muted-foreground">
+                                        <UploadCloud className="mx-auto h-8 w-8"/>
+                                        <p>Click to upload a flyer</p>
                                     </div>
                                     )}
                                 </div>
