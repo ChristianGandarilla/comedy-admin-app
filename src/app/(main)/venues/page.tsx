@@ -17,11 +17,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Venue } from '@/lib/types';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 type VenueFormData = Omit<Venue, 'id' | 'showHistory'>;
 
 export default function VenuesPage() {
-  const [venues, setVenues] = useState<Venue[]>(initialVenues);
+  const [venues, setVenues] = useLocalStorage<Venue[]>('venues', initialVenues);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingVenue, setEditingVenue] = useState<Venue | undefined>(undefined);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -54,7 +55,7 @@ export default function VenuesPage() {
     if (editingVenue) {
       setVenues(
         venues.map((v) =>
-          v.id === editingVenue.id ? { ...v, ...data, imageUrl: data.imageUrl || v.imageUrl } : v
+          v.id === editingVenue.id ? { ...editingVenue, ...data, imageUrl: data.imageUrl || v.imageUrl } : v
         )
       );
     } else {

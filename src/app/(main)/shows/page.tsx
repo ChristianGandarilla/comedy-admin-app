@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import PageHeader from '@/components/page-header';
-import { shows as initialShows, comedians, venues } from '@/lib/data';
+import { shows as initialShows, comedians as initialComedians, venues as initialVenues } from '@/lib/data';
 import { columns } from '@/components/shows/columns';
 import { DataTable } from '@/components/shows/data-table';
 import ShowForm from '@/components/shows/show-form';
@@ -17,12 +17,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import type { Show } from '@/lib/types';
+import type { Show, Comedian, Venue } from '@/lib/types';
+import useLocalStorage from '@/hooks/use-local-storage';
+
 
 type ShowFormData = Omit<Show, 'id' | 'performers'> & { performerIds: string[] };
 
 export default function ShowsPage() {
-  const [shows, setShows] = useState<Show[]>(initialShows);
+  const [shows, setShows] = useLocalStorage<Show[]>('shows', initialShows);
+  const [comedians] = useLocalStorage<Comedian[]>('comedians', initialComedians);
+  const [venues] = useLocalStorage<Venue[]>('venues', initialVenues);
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingShow, setEditingShow] = useState<Show | undefined>(undefined);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -57,7 +62,7 @@ export default function ShowsPage() {
     if (editingShow) {
       setShows(
         shows.map((s) =>
-          s.id === editingShow.id ? { ...s, ...data, performers: showPerformers } : s
+          s.id === editingShow.id ? { ...editingShow, ...data, performers: showPerformers } : s
         )
       );
     } else {

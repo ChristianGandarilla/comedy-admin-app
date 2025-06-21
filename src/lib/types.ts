@@ -53,7 +53,7 @@ export interface Comedian {
 
 export interface Transaction {
     id: string;
-    showId: string;
+    showId?: string;
     date: string;
     type: 'income' | 'expense';
     category: 'ticket sales' | 'merchandise' | 'venue rental' | 'marketing' | 'performer payment' | 'other';

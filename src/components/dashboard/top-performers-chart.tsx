@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -8,42 +9,42 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-
-const chartData = [
-  { comedian: 'John Doe', shows: 12, fill: 'var(--color-john)' },
-  { comedian: 'Jane Smith', shows: 10, fill: 'var(--color-jane)' },
-  { comedian: 'Mike Drop', shows: 8, fill: 'var(--color-mike)' },
-  { comedian: 'Alice Giggle', shows: 7, fill: 'var(--color-alice)' },
-  { comedian: 'Bob Chuckle', shows: 5, fill: 'var(--color-bob)' },
-];
+import type { Show, Comedian } from '@/lib/types';
 
 const chartConfig = {
   shows: {
     label: 'Shows',
-  },
-  john: {
-    label: 'John Doe',
     color: 'hsl(var(--chart-1))',
-  },
-  jane: {
-    label: 'Jane Smith',
-    color: 'hsl(var(--chart-2))',
-  },
-  mike: {
-    label: 'Mike Drop',
-    color: 'hsl(var(--chart-3))',
-  },
-  alice: {
-    label: 'Alice Giggle',
-    color: 'hsl(var(--chart-4))',
-  },
-  bob: {
-    label: 'Bob Chuckle',
-    color: 'hsl(var(--chart-5))',
   },
 } satisfies ChartConfig;
 
-export default function TopPerformersChart() {
+interface TopPerformersChartProps {
+  shows: Show[];
+  comedians: Comedian[];
+}
+
+export default function TopPerformersChart({ shows, comedians }: TopPerformersChartProps) {
+  const performanceCounts = shows.reduce((acc, show) => {
+    show.performers.forEach(performer => {
+      if (acc[performer.id]) {
+        acc[performer.id]++;
+      } else {
+        acc[performer.id] = 1;
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  const chartData = comedians
+    .map(comedian => ({
+      comedian: comedian.name,
+      shows: performanceCounts[comedian.id] || 0,
+    }))
+    .filter(c => c.shows > 0)
+    .sort((a, b) => b.shows - a.shows)
+    .slice(0, 5);
+
+
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-72">
       <BarChart
@@ -68,7 +69,7 @@ export default function TopPerformersChart() {
           cursor={false}
           content={<ChartTooltipContent indicator="dot" />}
         />
-        <Bar dataKey="shows" layout="vertical" radius={5} />
+        <Bar dataKey="shows" layout="vertical" radius={5} fill="var(--color-shows)" />
       </BarChart>
     </ChartContainer>
   );

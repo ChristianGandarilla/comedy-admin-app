@@ -17,12 +17,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Comedian } from '@/lib/types';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 // This is the type of data the form will produce
 type ComedianFormData = Omit<Comedian, 'id' | 'performanceHistory' | 'imageUrl'>;
 
 export default function ComediansPage() {
-  const [comedians, setComedians] = useState<Comedian[]>(initialComedians);
+  const [comedians, setComedians] = useLocalStorage<Comedian[]>('comedians', initialComedians);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingComedian, setEditingComedian] = useState<Comedian | undefined>(undefined);
   const [isAlertOpen, setIsAlertOpen] = useState(false);

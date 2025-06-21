@@ -19,12 +19,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Transaction } from '@/lib/types';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 // This is the type of data the form will produce
 type TransactionFormData = Omit<Transaction, 'id'>;
 
 export default function FinancesPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [transactions, setTransactions] = useLocalStorage<Transaction[]>('transactions', initialTransactions);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | undefined>(undefined);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -57,7 +58,7 @@ export default function FinancesPage() {
     if (editingTransaction) {
       setTransactions(
         transactions.map((t) =>
-          t.id === editingTransaction.id ? { ...t, ...data } : t
+          t.id === editingTransaction.id ? { ...editingTransaction, ...data } : t
         )
       );
     } else {
@@ -102,7 +103,7 @@ export default function FinancesPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <FinancesStats />
+      <FinancesStats transactions={transactions}/>
       <DataTable
         columns={columns}
         data={transactions}

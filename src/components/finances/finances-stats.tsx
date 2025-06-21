@@ -1,10 +1,15 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import { transactions } from '@/lib/data';
+import type { Transaction } from '@/lib/types';
 
-export default function FinancesStats() {
+interface FinancesStatsProps {
+  transactions: Transaction[];
+}
+
+export default function FinancesStats({ transactions }: FinancesStatsProps) {
   const { totalIncome, totalExpenses, netProfit } = transactions.reduce(
     (acc, t) => {
       if (t.type === 'income') {

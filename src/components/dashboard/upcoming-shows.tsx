@@ -1,9 +1,9 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { shows } from '@/lib/data';
 import type { Show } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
@@ -11,7 +11,11 @@ import { Calendar, Ticket } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 
-export default function UpcomingShows() {
+interface UpcomingShowsProps {
+  shows: Show[];
+}
+
+export default function UpcomingShows({ shows }: UpcomingShowsProps) {
   const [upcomingShows, setUpcomingShows] = useState<Show[]>([]);
 
   useEffect(() => {
@@ -21,7 +25,7 @@ export default function UpcomingShows() {
       .filter((show) => new Date(show.date) > now)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     setUpcomingShows(filteredShows);
-  }, []);
+  }, [shows]);
 
   return (
     <Card className="lg:col-span-2">

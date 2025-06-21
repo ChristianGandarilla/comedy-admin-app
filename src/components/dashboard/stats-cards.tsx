@@ -1,15 +1,30 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Mic, Building, BarChart4 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import { shows, transactions, venues, comedians } from '@/lib/data';
+import type { Show, Transaction, Venue, Comedian } from '@/lib/types';
 
-export default function StatsCards() {
+interface StatsCardsProps {
+  shows: Show[];
+  transactions: Transaction[];
+  venues: Venue[];
+  comedians: Comedian[];
+}
+
+export default function StatsCards({
+  shows,
+  transactions,
+  venues,
+  comedians,
+}: StatsCardsProps) {
   const totalShows = shows.length;
   const netProfit = transactions.reduce((acc, t) => {
     return t.type === 'income' ? acc + t.amount : acc - t.amount;
   }, 0);
-  const topVenue = venues[0]?.name || 'N/A';
+
+  // Simplified logic for top venue and comedian
+  const topVenue = venues[0]?.name || 'N/A'; 
   const topComedian = comedians[0]?.name || 'N/A';
 
   return (
@@ -21,7 +36,7 @@ export default function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalShows}</div>
-          <p className="text-xs text-muted-foreground">+5 from last month</p>
+          <p className="text-xs text-muted-foreground">All-time shows scheduled</p>
         </CardContent>
       </Card>
       <Card>
@@ -31,7 +46,7 @@ export default function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(netProfit)}</div>
-          <p className="text-xs text-muted-foreground">+12% from last month</p>
+          <p className="text-xs text-muted-foreground">All-time net profit</p>
         </CardContent>
       </Card>
       <Card>
@@ -41,7 +56,7 @@ export default function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold truncate">{topVenue}</div>
-          <p className="text-xs text-muted-foreground">Highest attendance</p>
+          <p className="text-xs text-muted-foreground">Highest attendance (TBD)</p>
         </CardContent>
       </Card>
       <Card>
@@ -51,7 +66,7 @@ export default function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{topComedian}</div>
-          <p className="text-xs text-muted-foreground">Most performances</p>
+          <p className="text-xs text-muted-foreground">Most performances (TBD)</p>
         </CardContent>
       </Card>
     </div>
